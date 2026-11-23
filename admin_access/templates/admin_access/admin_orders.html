@@ -1,0 +1,62 @@
+{% extends 'admin_access/admin_home.html' %}
+{% load static %}
+{% block admin_content %}
+
+<h1>this is Orders contents</h1>
+
+
+<select class="form-select form-select-lg mb-3" id="customerSelect" aria-label="Large select example" name="customer_id">
+    <option value="{% url 'admin-orders' %}" {% if selected_customer is None %}selected{% endif %}>
+        All Orders
+    </option>
+    
+    {% for customer in customers %}
+        <option value="{% url 'admin-orders-filtered' customer.id %}" {% if selected_customer and customer.id == selected_customer.id %}selected{% endif %}>
+            {{ customer.name }}
+        </option>
+    {% endfor %}
+</select>
+
+
+
+<table class="table table-success table-striped text-center">
+    <thead>
+        <th>S.No</th>
+        <th>TransactionId</th>
+        <th>Customer</th>
+        <th>CartItems Count</th>
+        <th>Cart Value</th>
+        <th>Complete/Not</th>
+        
+    </thead>
+    <tbody>
+        {% for order in orders %}
+            <tr>
+                <td>{{forloop.counter}}</td>
+                <td>{{order.transaction_id}}</td>
+                <td>{{order.customer.user.username}}</td>
+                <td>{{order.get_cart_quantity}}</td>
+                <td>{{order.get_cart_total}}</td>
+                <td>
+                    {% if order.complete %}
+                        <p class="text-primary">completed</p>
+                    {% else %}
+                        <p class="text-danger">not completed</p>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+<script>
+
+    document.getElementById('customerSelect').addEventListener('change', function() {
+        var url = this.value; // Get the value of the selected option which is the URL
+        window.location.href = url; // Redirect to the selected URL
+    });
+</script>
+
+
+{% endblock %}
